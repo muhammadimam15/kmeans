@@ -1,0 +1,43 @@
+---
+title: "R Notebook"
+output:
+  html_document:
+    df_print: paged
+---
+
+```{r}
+library(tidyverse)
+library(cluster)
+library(factoextra)
+```
+```{r}
+data = read.delim("Wholesale customers data.csv", sep = ",")
+summary(data)
+summary(is.na(data))
+```
+```{r}
+data.imamm <- data[,2:6]
+data.isi <- data[,"Channel"]
+set.seed(4321)
+result <- kmeans(data.imamm,3)
+result
+```
+```{r}
+par(mfrow=c(2,2), mar=c(5,4,2,2))
+plot(data.imamm[, c(1,2)], col=result$cluster)
+plot(data.imamm[, c(1,2)], col=data.isi)
+plot(data.imamm[, c(3,4)], col=result$cluster)
+plot(data.imamm[, c(3,4)], col=data.isi)
+```
+```{r}
+data.imamm$cluster <- factor(result$cluster)
+centers <- as.data.frame(result$centers)
+library(ggplot2)
+ggplot() +
+  geom_point(data=data.imamm, aes(x=Milk, y=Grocery, color=cluster)) +
+  geom_point(data=centers, aes(x=Milk, y=Grocery, color="Center"),
+             size=52, alpha=.3, show.legend = FALSE)
+```
+
+
+
